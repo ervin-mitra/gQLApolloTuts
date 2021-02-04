@@ -26,6 +26,15 @@ module.exports = {
             dataSources.launchAPI.getLaunchById( { launchId: id }),
         me: (_, __, { dataSources }) => dataSources.userAPI.findOrCreateUser
     },
+    Mutation: {
+        login: async (_, { email }, { dataSources }) => {
+            const user = await dataSources.userAPI.findOrCreateUser({ email })
+            if(user) {
+                user.token = Buffer.from(email).toString('base64')
+                return user
+            }
+        }
+    },
     Mission: {
         // default size is 'LARGE' if not provided
         missionPatch: (mission, {size} = {size: 'LARGE'}) => {
@@ -38,7 +47,7 @@ module.exports = {
         isBooked: async (launch, _, { dataSources }) =>
           dataSources.userAPI.isBookedOnLaunch({ launchId: launch.id }),
       },
-      User: {
+    User: {
         trips: async (_, __, { dataSources }) => {
           // get ids of launches by user
           const launchIds = await dataSources.userAPI.getLaunchIdsByUser();
@@ -50,7 +59,7 @@ module.exports = {
             }) || []
           );
         },
-      },
+    },
 }
 
 /**
