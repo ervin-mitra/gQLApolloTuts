@@ -25,4 +25,3 @@ ReactDOM.render(
   document.getElementById('root')
 )
 
-// hmmmm
